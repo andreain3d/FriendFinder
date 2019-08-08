@@ -14,8 +14,28 @@ module.exports = (function() {
   apiRoutes.post("/friends", function(req, res) {
     var newFriend = req.body;
 
+    var compareUsers = function(user) {
+      var totalDiff = 0;
+      for (var j = 0; j < user.scores.length; j++) {
+        totalDiff += Math.abs(user.scores[j] - newFriend.scores[j]);
+      }
+      return totalDiff;
+    };
+
+    var similarUser;
+    var currentDiff = 41;
+    for (var i = 0; i < friends.friends.length; i++) {
+      var compareDiff = compareUsers(friends.friends[i]);
+      if (compareDiff < currentDiff) {
+        currentDiff = compareDiff;
+        similarUser = friends.friends[i];
+      }
+    }
+
     friends.friends.push(newFriend);
-    res.json(newFriend);
+    res.json(similarUser);
+
+    console.log("Name: " + similarUser.name);
   });
 
   return apiRoutes;
